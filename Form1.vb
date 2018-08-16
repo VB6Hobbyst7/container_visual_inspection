@@ -9,6 +9,7 @@ Imports System.Collections.Generic
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Reflection
+Imports GateInspection
 
 Public Class Form1
 
@@ -33,6 +34,10 @@ Public Class Form1
 
     Dim vStationName As String = ""
     Dim vPath As String = ""
+
+    Private WithEvents objCamera1 As New Camera 'Top View
+    Private WithEvents objCamera2 As New Camera 'Side View
+    Dim vCamera2Index As Boolean
 
     Private Sub Button1_Click(sender As Object, e As EventArgs)
 
@@ -84,7 +89,8 @@ Public Class Form1
         '4)Delete images
     End Sub
 
-    Sub start_capture(url As String, delay As Integer, capture As Integer)
+
+    Private Sub start_capture(url As String, delay As Integer, capture As Integer)
         Try
 
             '-----Start to save all images to Storage---
@@ -117,6 +123,41 @@ Public Class Form1
         End Try
     End Sub
 
+
+    Function savePicture(index As Integer, tImage As Bitmap,
+                            Optional Height As Integer = 0,
+                            Optional Width As Integer = 0,
+                            Optional show As Boolean = False,
+                            Optional center As Boolean = False,
+                            Optional file_prefix As String = "") As MyPictureBox
+        'Method#2
+        Dim imageViewer As MyPictureBox = New MyPictureBox
+
+        If show Then
+            PictureBox1.Image = tImage
+            PictureBox1.SizeMode = PictureBoxSizeMode.StretchImage
+        End If
+
+        If center Then
+            PictureBox1.SizeMode = PictureBoxSizeMode.CenterImage
+        End If
+
+        tImage.Save(file_prefix & "-" & "image" & index.ToString & ".png",
+                    System.Drawing.Imaging.ImageFormat.Png)
+
+        imageViewer.fileName = file_prefix & "-" & "image" & index.ToString & ".png"
+        imageViewer.Image = tImage
+        imageViewer.SizeMode = PictureBoxSizeMode.Zoom
+        AddHandler imageViewer.Click, AddressOf PictureBoxClick
+
+
+        imageViewer.Height = Height 'FlowLayoutPanel1.Height - 20
+        imageViewer.Width = Width 'FlowLayoutPanel1.Width / 7
+        'lblCapture.Text = Width'"Capture picture #" & index.ToString
+        Return imageViewer
+    End Function
+
+
     Function capturePicture(index As Integer, cameraObj As WebClient,
                             cameraUrl As String,
                             Optional Height As Integer = 0,
@@ -141,7 +182,8 @@ Public Class Form1
             PictureBox1.SizeMode = PictureBoxSizeMode.CenterImage
         End If
 
-        tImage.Save(file_prefix & "-" & "image" & index.ToString & ".png", System.Drawing.Imaging.ImageFormat.Png)
+        tImage.Save(file_prefix & "-" & "image" & index.ToString & ".png",
+                    System.Drawing.Imaging.ImageFormat.Png)
 
         imageViewer.fileName = file_prefix & "-" & "image" & index.ToString & ".png"
         imageViewer.Image = tImage
@@ -224,6 +266,9 @@ Public Class Form1
         versionNumber = Assembly.GetExecutingAssembly().GetName().Version
         Me.Text = Me.Text & " version :" & versionNumber.ToString
 
+
+        objCamera1.ip = vCameraIp_1
+        objCamera2.ip = vCameraIp_2
     End Sub
 
 
@@ -260,8 +305,12 @@ Public Class Form1
     End Sub
 
     Private Sub btnCapture1_Click(sender As Object, e As EventArgs) Handles btnCapture1.Click
-        captureOneShort(vCameraCaptureUrl_1, chkShowCaptured.Checked)
-        lblCapture.Text = "Capture picture #" & FlowLayoutPanel1.Controls.Count.ToString
+        'Using new Camera class
+        objCamera1.capture()
+
+        'Older Style
+        'captureOneShort(vCameraCaptureUrl_1, chkShowCaptured.Checked)
+        'lblCapture.Text = "Capture picture #" & FlowLayoutPanel1.Controls.Count.ToString
     End Sub
 
     Sub captureOneShort(url As String, Optional show As Boolean = False,
@@ -291,15 +340,41 @@ Public Class Form1
     End Sub
 
     Private Sub btnCapture2_Click(sender As Object, e As EventArgs) Handles btnCapture2.Click
-        If FlowLayoutPanel2.Controls.Count = 2 Then
-            FlowLayoutPanel2.Controls.RemoveAt(0)
-        End If
-        captureOneShort2(vCameraCaptureUrl_2, True)
-        lblCount2.Text = "Capture picture #" & FlowLayoutPanel2.Controls.Count.ToString
+
+        objCamera2.capture()
+
+        'If FlowLayoutPanel2.Controls.Count = 2 Then
+        '    FlowLayoutPanel2.Controls.RemoveAt(0)
+        'End If
+        'captureOneShort2(vCameraCaptureUrl_2, True)
+        'lblCount2.Text = "Capture picture #" & FlowLayoutPanel2.Controls.Count.ToString
     End Sub
 
+
+
+
     Private Sub btnAuto1_Click(sender As Object, e As EventArgs) Handles btnAuto1.Click
+
+        '    'Original Threading
+        'Dim t1 As New Threading.Thread(AddressOf start_capture)
+        't1.IsBackground = True
+        't1.Start(100)
+
+
+
         start_capture(vCameraCaptureUrl_1, vCameraDelay_1, vCameraCapture_1)
+    End Sub
+
+    Private Sub objCamera1_DownloadCompleted(ByVal sender As Object, ByVal e As DownloadCompletedEventArgs) Handles objCamera1.downloadCompleted
+        Dim vImage As Bitmap = e.image
+
+        Dim imageViewer As MyPictureBox = New MyPictureBox
+        imageViewer = savePicture(FlowLayoutPanel1.Controls.Count + 1, e.image,
+                                     FlowLayoutPanel1.Height - 20, FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
+                                     chkShowCaptured.Checked, False, "top")
+
+        FlowLayoutPanel1.Controls.Add(imageViewer)
+        FlowLayoutPanel1.ScrollControlIntoView(imageViewer)
     End Sub
 
     Private Sub FlowLayoutPanel2_Paint(sender As Object, e As PaintEventArgs) Handles FlowLayoutPanel2.Paint
@@ -307,12 +382,176 @@ Public Class Form1
     End Sub
 
     Private Sub btnCenter_Click(sender As Object, e As EventArgs) Handles btnCenter.Click
+        'If FlowLayoutPanel2.Controls.Count = 2 Then
+        '    FlowLayoutPanel2.Controls.RemoveAt(0)
+        'End If
+        'captureOneShort2(vCameraCaptureUrl_2, True, True)
+        'lblCount2.Text = "Capture picture #" & FlowLayoutPanel2.Controls.Count.ToString
+        objCamera2.capture()
+        PictureBox1.SizeMode = PictureBoxSizeMode.CenterImage
+    End Sub
+
+    Private Sub objCamera2_downloadCompleted(sender As Object, e As DownloadCompletedEventArgs) Handles objCamera2.downloadCompleted
+
         If FlowLayoutPanel2.Controls.Count = 2 Then
             FlowLayoutPanel2.Controls.RemoveAt(0)
         End If
-        captureOneShort2(vCameraCaptureUrl_2, True, True)
+        Dim vImage As Bitmap = e.image
+        Dim imageViewer As MyPictureBox = New MyPictureBox
+        imageViewer = savePicture(IIf(vCamera2Index, 1, 0), e.image,
+                                     FlowLayoutPanel2.Height - 5, FlowLayoutPanel2.Width / 3,
+                                       True, False, "side")
+        FlowLayoutPanel2.Controls.Add(imageViewer)
+        FlowLayoutPanel2.ScrollControlIntoView(imageViewer)
         lblCount2.Text = "Capture picture #" & FlowLayoutPanel2.Controls.Count.ToString
+        vCamera2Index = Not vCamera2Index
     End Sub
+
+    Private Sub PictureBox1_MouseWheel(sender As Object, e As MouseEventArgs) Handles PictureBox1.MouseWheel
+        If e.Delta <> 0 Then
+            If e.Delta <= 0 Then
+                If PictureBox1.Width < 500 Then Exit Sub 'minimum 500?
+            Else
+                If PictureBox1.Width > 2000 Then Exit Sub 'maximum 2000?
+            End If
+
+            PictureBox1.Width += CInt(PictureBox1.Width * e.Delta / 1000)
+            PictureBox1.Height += CInt(PictureBox1.Height * e.Delta / 1000)
+        End If
+    End Sub
+End Class
+
+
+Public Class Camera
+    Dim _ip As String
+    Dim _delay As Integer = 100
+    Dim _short_number As Integer = 7
+    Dim _image As Bitmap
+    Private vUrl As String = ""
+
+    Public Property ip() As String
+        Get
+            Return _ip
+        End Get
+        Set(ByVal value As String)
+            _ip = value
+            vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+        End Set
+    End Property
+    Public Property delay() As Integer
+        Get
+            Return _delay
+        End Get
+        Set(ByVal value As Integer)
+            _delay = value
+        End Set
+    End Property
+    Public Property short_number() As Integer
+        Get
+            Return _short_number
+        End Get
+        Set(ByVal value As Integer)
+            _short_number = value
+        End Set
+    End Property
+
+    Public ReadOnly Property image() As Bitmap
+        Get
+            Return _image
+        End Get
+    End Property
+
+    Public Sub New(Optional ip As String = "")
+        _ip = ip
+        vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+    End Sub
+
+
+    Public Event downloadCompleted As EventHandler(Of DownloadCompletedEventArgs)
+
+    Protected Overridable Sub OnDownloadCompleted(ByVal e As DownloadCompletedEventArgs)
+        RaiseEvent downloadCompleted(Me, e)
+    End Sub
+
+    Public Sub capture()
+        Try
+            Dim tClient As New System.Net.WebClient
+            tClient.Credentials = New System.Net.NetworkCredential("admin", "Autogate2018")
+
+            Dim ImageInBytes() As Byte = tClient.DownloadData(vUrl)
+            Dim ImageStream As New IO.MemoryStream(ImageInBytes)
+            _image = Bitmap.FromStream(ImageStream)
+            tClient.Dispose()
+        Catch ex As Exception
+            _image = Nothing
+        End Try
+        OnDownloadCompleted(New DownloadCompletedEventArgs(_image))
+    End Sub
+End Class
+
+
+
+Public Class ThreadExtensions
+    Private args() As Object
+    Private DelegateToInvoke As [Delegate]
+
+    Public Shared Function QueueUserWorkItem(ByVal method As [Delegate], ByVal ParamArray args() As Object) As Boolean
+        Return Threading.ThreadPool.QueueUserWorkItem(AddressOf ProperDelegate, New ThreadExtensions With {.args = args, .DelegateToInvoke = method})
+    End Function
+
+    Private Shared Sub ProperDelegate(ByVal state As Object)
+        Dim sd As ThreadExtensions = DirectCast(state, ThreadExtensions)
+
+        sd.DelegateToInvoke.DynamicInvoke(sd.args)
+    End Sub
+
+    Public Shared Sub ScSend(ByVal sc As Threading.SynchronizationContext, ByVal del As [Delegate], ByVal ParamArray args() As Object)
+        sc.Send(New Threading.SendOrPostCallback(AddressOf ProperDelegate), New ThreadExtensions With {.args = args, .DelegateToInvoke = del})
+    End Sub
+End Class
+
+Public Class DownloadChangedEventArgs
+    Inherits EventArgs
+
+    Private _CurrentCount As Integer
+    Private _Max As Integer
+    Private _Image As Bitmap
+
+    Public Sub New(ByVal cc As Integer, ByVal max As Integer)
+        _CurrentCount = cc
+        _Max = max
+    End Sub
+    Public ReadOnly Property CurrentCount() As Integer
+        Get
+            Return _CurrentCount
+        End Get
+    End Property
+    Public ReadOnly Property Max() As Integer
+        Get
+            Return _Max
+        End Get
+    End Property
+
+    Public ReadOnly Property image() As Bitmap
+        Get
+            Return _Image
+        End Get
+    End Property
+End Class
+
+Public Class DownloadCompletedEventArgs
+    Inherits EventArgs
+    Private _image As Bitmap
+
+    Public Sub New(ByVal image As Bitmap)
+        _image = image
+    End Sub
+    Public ReadOnly Property image() As Bitmap
+        Get
+            Return _image
+        End Get
+    End Property
+
 End Class
 
 Public Class MyPictureBox
@@ -328,10 +567,9 @@ Public Class MyPictureBox
         End Set
     End Property
 
-
-
-
 End Class
+
+
 
 
 Public Class Ini
