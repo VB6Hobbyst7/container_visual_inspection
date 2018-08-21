@@ -40,6 +40,7 @@ Public Class Form1
     Dim vCamera2Index As Boolean
 
     Dim vCenter As Boolean
+    Dim vShowImage As Boolean
 
     Private Sub Button1_Click(sender As Object, e As EventArgs)
 
@@ -285,7 +286,10 @@ Public Class Form1
 
 
         objCamera1.ip = vCameraIp_1
+        objCamera1.delay = vCameraDelay_1
+
         objCamera2.ip = vCameraIp_2
+        objCamera2.delay = vCameraDelay_2
     End Sub
 
 
@@ -323,8 +327,10 @@ Public Class Form1
 
     Private Sub btnCapture1_Click(sender As Object, e As EventArgs) Handles btnCapture1.Click
         'Using new Camera class
+        vShowImage = True
         objCamera1.CapturesAsync(1)
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
+
         'Older Style
         'captureOneShort(vCameraCaptureUrl_1, chkShowCaptured.Checked)
         'lblCapture.Text = "Capture picture #" & FlowLayoutPanel1.Controls.Count.ToString
@@ -539,8 +545,9 @@ Public Class Form1
 
         SetCamera1AutoBtnText("Auto(" & e.CurrentCount & ")")
 
-        If chkShowCaptured.Checked Then
+        If chkShowCaptured.Checked Or vShowImage Then
             AddImageToPictureBox(e.image)
+            vShowImage = False
         End If
 
 
@@ -668,7 +675,7 @@ Public Class Camera
                 ThreadExtensions.ScSend(context, New Action(Of DownloadChangedEventArgs)(AddressOf OnDownloadChanged), e)
             End If
 
-            Threading.Thread.Sleep(200)
+            Threading.Thread.Sleep(_delay)
         Next
         Dim duration As TimeSpan = DateTime.Now - startTime
         msg = "Download successful : " + (duration.TotalSeconds).ToString + " Sec(s)"
