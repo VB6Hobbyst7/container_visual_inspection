@@ -97,6 +97,9 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>good-mark.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Meta.Vlc, Version=16.5.1.0, Culture=neutral, PublicKeyToken=721a8c5379fa4056, processorArchitecture=x86">
       <HintPath>..\packages\Meta.Vlc.17.06.20\lib\net45\x86\Meta.Vlc.dll</HintPath>
@@ -217,6 +220,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="good-mark.ico" />
     <Content Include="LibVlc\libvlc.dll" />
     <Content Include="LibVlc\libvlccore.dll" />
     <Content Include="LibVlc\plugins\access\libaccess_bd_plugin.dll" />
