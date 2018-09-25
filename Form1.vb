@@ -272,6 +272,18 @@ Public Class Form1
             vPath = Directory.GetCurrentDirectory() & "\"
         End If
 
+        'Added by Chutchai on Sep 25,2018
+        'To delete older folder (15 days)
+        Dim iDay As Integer = 0
+        Dim sDay As String = ""
+        sDay = My_Ini.GetValue("storage", "day")
+        If sDay = "" Then
+            iDay = 15
+        Else
+            iDay = Val(sDay)
+        End If
+        DeleteFolderOlder15Day(vPath, vStationName, iDay)
+        '-----------------------------------------
 
 
         'My_Ini.DeleteValue("NewSection", "TestValue", True)
@@ -292,6 +304,58 @@ Public Class Form1
         objCamera2.delay = vCameraDelay_2
     End Sub
 
+    Private Sub DeleteFolderOlder15Day(sDirectory As String,
+                                       sBooth As String,
+                                       Optional iDay As Integer = 15)
+        Try
+
+            Dim dtToday As DateTime = Today.Date
+            Dim dt30day As DateTime = Today.Date.AddDays(-60)
+            Dim dtCurrent As DateTime
+            Dim strCurrentPath As String = ""
+            Dim diObj As DirectoryInfo
+
+            For i = 0 To (60 - iDay - 1)
+                dtCurrent = dt30day.AddDays(i)
+                strCurrentPath = sDirectory + dtCurrent.Year.ToString + "\" +
+                    dtCurrent.Month.ToString("00") + "\" + dtCurrent.Day.ToString("00") + "\" + sBooth
+                diObj = New DirectoryInfo(strCurrentPath)
+
+                If diObj.Exists Then
+                    diObj.Delete(True) 'True for recursive deleting
+                End If
+            Next
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Error Deleting Folder", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+    'Private Sub DeleteFolderOlder15Day(sDirectory As String)
+    '    Try
+    '        Dim dtCreated As DateTime
+    '        Dim dtToday As DateTime = Today.Date
+    '        Dim diObj As DirectoryInfo
+    '        Dim ts As TimeSpan
+    '        Dim lstDirsToDelete As New List(Of String)
+
+    '        For Each sSubDir As String In Directory.GetDirectories(sDirectory)
+    '            diObj = New DirectoryInfo(sSubDir)
+    '            dtCreated = diObj.CreationTime
+
+    '            ts = dtToday - dtCreated
+
+    '            'Add whatever storing you want here for all folders...
+
+    '            If ts.Days > 10 Then
+    '                lstDirsToDelete.Add(sSubDir)
+    '                'Store whatever values you want here... like how old the folder is
+    '                diObj.Delete(True) 'True for recursive deleting
+    '            End If
+    '        Next
+    '    Catch ex As Exception
+    '        MessageBox.Show(ex.Message, "Error Deleting Folder", MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    End Try
+    'End Sub
 
     Private Sub Form1_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
         If (e.KeyCode = Keys.C AndAlso e.Modifiers = Keys.Alt) Then
