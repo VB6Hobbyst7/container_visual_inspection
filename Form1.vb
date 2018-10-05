@@ -103,7 +103,7 @@ Public Class Form1
 
 
             Dim tClient As New System.Net.WebClient
-            tClient.Credentials = New System.Net.NetworkCredential("admin", "Autogate2018")
+            tClient.Credentials = New System.Net.NetworkCredential("gate", "Gateview2018")
             If vFirstCapture Then
                 Threading.Thread.Sleep(delay)
                 vFirstCapture = False
@@ -694,7 +694,7 @@ Public Class Camera
             'Dim e As DownloadCompletedEventArgs
             'e = New DownloadCompletedEventArgs(1, max)
             Dim tClient As New System.Net.WebClient
-            tClient.Credentials = New System.Net.NetworkCredential("admin", "Autogate2018")
+            tClient.Credentials = New System.Net.NetworkCredential("gate", "Gateview2018")
 
             Dim ImageInBytes() As Byte = tClient.DownloadData(vUrl)
             Dim ImageStream As New IO.MemoryStream(ImageInBytes)
