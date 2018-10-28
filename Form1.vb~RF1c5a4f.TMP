@@ -10,7 +10,6 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Reflection
 Imports GateInspection
-Imports System.Runtime.InteropServices
 
 Public Class Form1
 
@@ -228,20 +227,7 @@ Public Class Form1
 
     End Sub
 
-    <DllImport("user32.dll", SetLastError:=True)>
-    Private Shared Function SetWindowPos(ByVal hWnd As IntPtr, ByVal hWndInsertAfter As IntPtr, ByVal X As Integer, ByVal Y As Integer, ByVal cx As Integer, ByVal cy As Integer, ByVal uFlags As Integer) As Boolean
-    End Function
 
-    Private Const SWP_NOSIZE As Integer = &H1
-    Private Const SWP_NOMOVE As Integer = &H2
-
-    Private Shared ReadOnly HWND_TOPMOST As New IntPtr(-1)
-    Private Shared ReadOnly HWND_NOTOPMOST As New IntPtr(-2)
-
-    Public Function MakeTopMost(hw As IntPtr)
-        SetWindowPos(hw, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE)
-        Return 0
-    End Function
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
 
@@ -317,24 +303,39 @@ Public Class Form1
         objCamera2.ip = vCameraIp_2
         objCamera2.delay = vCameraDelay_2
 
-
-
-
-    End Sub
-
-    Sub setCTCStoAlwaysTop()
         '---Test for Set On Top for CTCS window.
-        Dim processes() As Process
-        Dim instance As Process
-        Dim process As New Process()
-        processes = Process.GetProcesses
-        For Each instance In processes
-            If instance.ProcessName = "pcsws" Then
-                ''something here
-                SetWindowPos(instance.MainWindowHandle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE)
-            End If
-        Next
+        'Dim processes() As Process
+        'Dim instance As Process
+        'Dim process As New Process()
+        'processes = Process.GetProcesses
+        'For Each instance In processes
+        '    If instance.ProcessName Like "Session*" Then
+        '        ''something here
+        '        MsgBox(instance.ProcessName)
+        '    End If
+        'Next
+        If CheckIfRunning("Session A - [24 x 80]") Then
+            MsgBox("running")
+        End If
+
     End Sub
+
+    Private Function CheckIfRunning(sProcessName As String) As Boolean
+        Dim bRet As Boolean = False
+        Try
+            Dim listProc() As System.Diagnostics.Process
+            listProc = System.Diagnostics.Process.GetProcessesByName(sProcessName)
+            If listProc.Length > 0 Then
+                ' Process is running
+            Else
+                ' Process is not running
+            End If
+        Catch ex As Exception
+            'GL.Excep("Frm_Main_SRV.CheckIfRunning", ex)
+            MsgBox(ex.Message)
+        End Try
+        Return bRet
+    End Function
 
     Private Sub DeleteFolderOlder15Day(sDirectory As String,
                                        sBooth As String,
@@ -657,10 +658,6 @@ Public Class Form1
 
 
 
-    End Sub
-
-    Private Sub llSetToTop_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles llSetToTop.LinkClicked
-        setCTCStoAlwaysTop()
     End Sub
 End Class
 

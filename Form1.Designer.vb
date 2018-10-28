@@ -41,6 +41,7 @@ Partial Class Form1
         Me.lblCount2 = New System.Windows.Forms.Label()
         Me.AxVLCPlugin22 = New AxAXVLC.AxVLCPlugin2()
         Me.btnLive2 = New System.Windows.Forms.Button()
+        Me.llSetToTop = New System.Windows.Forms.LinkLabel()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         CType(Me.AxVLCPlugin21, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -80,6 +81,7 @@ Partial Class Form1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.llSetToTop)
         Me.GroupBox1.Controls.Add(Me.chkShowCaptured)
         Me.GroupBox1.Controls.Add(Me.btnCapture1)
         Me.GroupBox1.Controls.Add(Me.lblCapture)
@@ -215,6 +217,16 @@ Partial Class Form1
         Me.btnLive2.Text = "Live View"
         Me.btnLive2.UseVisualStyleBackColor = True
         '
+        'llSetToTop
+        '
+        Me.llSetToTop.AutoSize = True
+        Me.llSetToTop.Location = New System.Drawing.Point(191, 239)
+        Me.llSetToTop.Name = "llSetToTop"
+        Me.llSetToTop.Size = New System.Drawing.Size(102, 13)
+        Me.llSetToTop.TabIndex = 16
+        Me.llSetToTop.TabStop = True
+        Me.llSetToTop.Text = "set all CTCS to TOP"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -255,4 +267,5 @@ Partial Class Form1
     Friend WithEvents FlowLayoutPanel2 As FlowLayoutPanel
     Friend WithEvents chkShowCaptured As CheckBox
     Friend WithEvents btnCenter As Button
+    Friend WithEvents llSetToTop As LinkLabel
 End Class
