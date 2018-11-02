@@ -12,6 +12,8 @@ Imports System.Reflection
 Imports GateInspection
 Imports System.Runtime.InteropServices
 
+Imports System.IO.Ports
+
 Public Class Form1
 
     Dim vCameraIp_1 As String
@@ -42,6 +44,9 @@ Public Class Form1
 
     Dim vCenter As Boolean
     Dim vShowImage As Boolean
+
+    Dim sensorPort As SerialPort
+    Dim vPortName As String
 
     Private Sub Button1_Click(sender As Object, e As EventArgs)
 
@@ -127,7 +132,55 @@ Public Class Form1
         End Try
     End Sub
 
+    Sub enableSensorPort(vPort As String)
+        Try
+            sensorPort = New SerialPort(vPort)
+            With sensorPort
+                .BaudRate = 9600
+                .Parity = Parity.None
+                .StopBits = StopBits.One
+                .DataBits = 8
+                .Handshake = Handshake.None
+                AddHandler .DataReceived, AddressOf DataReceviedHandler
+                .Open()
+            End With
+        Catch ex As Exception
+            lblSensor.BackColor = Color.Red
+            lblSensor.Text = vPort & " error."
+        End Try
 
+    End Sub
+
+    Private Sub DataReceviedHandler(sender As Object, e As SerialDataReceivedEventArgs)
+        Dim sp As SerialPort = CType(sender, SerialPort)
+        Dim indata As String = sp.ReadLine() '  .ReadExisting() 
+        indata = indata.Replace(vbCr, "")
+        displaySensorData(indata)
+
+        If indata = "1" Then
+            btnAuto1_Click(sender, e)
+        End If
+
+    End Sub
+
+    Private Sub displaySensorData(ByVal vData As String)
+        If lblSensor.InvokeRequired Then
+            lblSensor.Invoke(New Action(Of String)(AddressOf displaySensorData), vData)
+        Else
+            lblSensor.Text = vData
+            If vData = "1" Then
+                lblSensor.BackColor = Color.Green
+                lblSensor.Text = "Arrived"
+
+            ElseIf "0" Then
+                lblSensor.BackColor = Color.Red
+                lblSensor.Text = "Leaved"
+            Else
+                lblSensor.BackColor = Color.Yellow
+                lblSensor.Text = "Waiting (" & Now.Second.ToString & ")"
+            End If
+        End If
+    End Sub
 
 
     Function savePicture(index As Integer, tImage As Bitmap,
@@ -318,8 +371,13 @@ Public Class Form1
         objCamera2.delay = vCameraDelay_2
 
 
-
-
+        'Enable Sensor Port
+        vPortName = My_Ini.GetValue("sensor", "port")
+        If vPortName = "" Then
+            vPortName = "COM5"
+        End If
+        enableSensorPort(vPortName)
+        'end Port
     End Sub
 
     Sub setCTCStoAlwaysTop()
@@ -341,22 +399,39 @@ Public Class Form1
                                        Optional iDay As Integer = 15)
         Try
 
-            Dim dtToday As DateTime = Today.Date
-            Dim dt30day As DateTime = Today.Date.AddDays(-60)
-            Dim dtCurrent As DateTime
-            Dim strCurrentPath As String = ""
-            Dim diObj As DirectoryInfo
+            Dim strFile As String = "delete_log.txt"
+            Dim fileExists As Boolean = File.Exists(strFile)
+            If fileExists Then
+                File.Delete(strFile)
+            End If
+            Using sw As New StreamWriter(File.Open(strFile, FileMode.OpenOrCreate))
+                '    sw.WriteLine(
+                '        IIf(fileExists,
+                '"Error Message in  Occured at-- " & DateTime.Now,
+                '"Start Error Log for today"))
 
-            For i = 0 To (60 - iDay - 1)
-                dtCurrent = dt30day.AddDays(i)
-                strCurrentPath = sDirectory + dtCurrent.Year.ToString + "\" +
-                    dtCurrent.Month.ToString("00") + "\" + dtCurrent.Day.ToString("00") + "\" + sBooth
-                diObj = New DirectoryInfo(strCurrentPath)
 
-                If diObj.Exists Then
-                    diObj.Delete(True) 'True for recursive deleting
-                End If
-            Next
+                Dim dtToday As DateTime = Today.Date
+                Dim dt30day As DateTime = Today.Date.AddDays(-60)
+                Dim dtCurrent As DateTime
+                Dim strCurrentPath As String = ""
+                Dim diObj As DirectoryInfo
+
+                For i = 0 To (60 - iDay - 1)
+                    dtCurrent = dt30day.AddDays(i)
+                    strCurrentPath = sDirectory + dtCurrent.Year.ToString + "\" +
+                        dtCurrent.Month.ToString("00") + "\" + dtCurrent.Day.ToString("00") + "\" + sBooth
+                    diObj = New DirectoryInfo(strCurrentPath)
+
+                    If diObj.Exists Then
+                        diObj.Delete(True) 'True for recursive deleting
+                        sw.WriteLine(strCurrentPath & "--> Deleted")
+                    Else
+                        sw.WriteLine(strCurrentPath & "--> Not Existing")
+                    End If
+                Next
+
+            End Using
 
         Catch ex As Exception
             MessageBox.Show(ex.Message, "Error Deleting Folder", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -506,13 +581,24 @@ Public Class Form1
         '-----Start to save all images to Storage---
         save_image_to_storage()
         '-------------------------------------------
-
-        FlowLayoutPanel1.Controls.Clear()
+        clearFlowLayout(Nothing)
+        'FlowLayoutPanel1.Controls.Clear()
 
         SetCamera1AutoBtnText("Auto(0)")
         objCamera1.CapturesAsync(vCameraCapture_1)
 
         ' start_capture(vCameraCaptureUrl_1, vCameraDelay_1, vCameraCapture_1)
+    End Sub
+
+    Private Sub clearFlowLayout(ByVal image As Bitmap)
+
+        If FlowLayoutPanel1.InvokeRequired Then
+            'PictureBox1.Invoke(New Action(Of Bitmap)(AddressOf ShowImageToPictureBox), image)
+            FlowLayoutPanel1.Invoke(New Action(Of Bitmap)(AddressOf clearFlowLayout), image)
+        Else
+            FlowLayoutPanel1.Controls.Clear()
+        End If
+
     End Sub
 
     Private Sub objCamera1_DownloadCompleted(ByVal sender As Object, ByVal e As DownloadCompletedEventArgs) Handles objCamera1.downloadCompleted
