@@ -157,8 +157,12 @@ Public Class Form1
         indata = indata.Replace(vbCr, "")
         displaySensorData(indata)
 
-        If indata = "1" Then
+        If indata = "1" Or indata = "M" Then
             btnAuto1_Click(sender, e)
+        End If
+
+        If indata = "S" Then
+            btnCapture2_Click(sender, e)
         End If
 
     End Sub
@@ -169,12 +173,19 @@ Public Class Form1
         Else
             lblSensor.Text = vData
             If vData = "1" Then
-                lblSensor.BackColor = Color.Green
+                lblSensor.BackColor = Color.Red
                 lblSensor.Text = "Arrived"
 
-            ElseIf "0" Then
+            ElseIf vData = "0" Then
                 lblSensor.BackColor = Color.Red
                 lblSensor.Text = "Leaved"
+
+            ElseIf vData = "S" Then
+                lblSensor.BackColor = Color.Green
+                lblSensor.Text = "Single Capture"
+            ElseIf vData = "M" Then
+                lblSensor.BackColor = Color.Blue
+                lblSensor.Text = "Multiple Capture"
             Else
                 lblSensor.BackColor = Color.Yellow
                 lblSensor.Text = "Waiting (" & Now.Second.ToString & ")"
