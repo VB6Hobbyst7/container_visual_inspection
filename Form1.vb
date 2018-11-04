@@ -362,7 +362,7 @@ Public Class Form1
         End If
         DeleteFolderOlder15Day(vPath, vStationName, iDay)
         '-----------------------------------------
-
+        DeletePictureFiles()
 
         'My_Ini.DeleteValue("NewSection", "TestValue", True)
         'My_Ini.DeleteSection("NewSection", True)
@@ -403,6 +403,22 @@ Public Class Form1
                 SetWindowPos(instance.MainWindowHandle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE)
             End If
         Next
+    End Sub
+
+
+    Private Sub DeletePictureFiles()
+        Try
+            Dim files() As String
+            files = Directory.GetFiles(".", "*.png", SearchOption.TopDirectoryOnly)
+            For Each FileName As String In files
+                Dim fileExists As Boolean = File.Exists(FileName)
+                If fileExists Then
+                    File.Delete(FileName)
+                End If
+            Next
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Error Deleting Folder", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub DeleteFolderOlder15Day(sDirectory As String,
