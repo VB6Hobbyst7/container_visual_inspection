@@ -754,8 +754,15 @@ Public Class Form1
 
         SetCamera1AutoBtnText("Auto(" & e.CurrentCount & ")")
 
+        'Edit by Chutchai on Oct 6 ,2018
+        'To show first captured picture on view , if "Show capture" is checked.
+        'On version 1.0.0.13
+
         If chkShowCaptured.Checked Or vShowImage Then
-            AddImageToPictureBox(e.image)
+            If e.CurrentCount = 1 Then
+                AddImageToPictureBox(e.image)
+            End If
+
             vShowImage = False
         End If
 
@@ -763,7 +770,7 @@ Public Class Form1
         Dim imageViewer As MyPictureBox = New MyPictureBox
         imageViewer = savePicture(FlowLayoutPanel1.Controls.Count + 1, e.image,
                                      FlowLayoutPanel1.Height - 20, FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
-                                     chkShowCaptured.Checked, False, "top")
+                                     chkShowCaptured.Checked And e.CurrentCount = 1, False, "top")
 
         SetCamera1LabelText(imageViewer.fileName)
         AddImageToPanel1(imageViewer)
