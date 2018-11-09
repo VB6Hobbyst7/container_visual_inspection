@@ -28,6 +28,7 @@ Partial Class Form1
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.lblSensor = New System.Windows.Forms.Label()
         Me.llSetToTop = New System.Windows.Forms.LinkLabel()
         Me.chkShowCaptured = New System.Windows.Forms.CheckBox()
         Me.btnCapture1 = New System.Windows.Forms.Button()
@@ -42,7 +43,7 @@ Partial Class Form1
         Me.lblCount2 = New System.Windows.Forms.Label()
         Me.AxVLCPlugin22 = New AxAXVLC.AxVLCPlugin2()
         Me.btnLive2 = New System.Windows.Forms.Button()
-        Me.lblSensor = New System.Windows.Forms.Label()
+        Me.chkShowLast = New System.Windows.Forms.CheckBox()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         CType(Me.AxVLCPlugin21, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -82,6 +83,7 @@ Partial Class Form1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.chkShowLast)
         Me.GroupBox1.Controls.Add(Me.lblSensor)
         Me.GroupBox1.Controls.Add(Me.llSetToTop)
         Me.GroupBox1.Controls.Add(Me.chkShowCaptured)
@@ -92,10 +94,19 @@ Partial Class Form1
         Me.GroupBox1.Controls.Add(Me.btnLive1)
         Me.GroupBox1.Location = New System.Drawing.Point(7, 0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(304, 257)
+        Me.GroupBox1.Size = New System.Drawing.Size(304, 277)
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "GroupBox1"
+        '
+        'lblSensor
+        '
+        Me.lblSensor.AutoSize = True
+        Me.lblSensor.Location = New System.Drawing.Point(101, 239)
+        Me.lblSensor.Name = "lblSensor"
+        Me.lblSensor.Size = New System.Drawing.Size(40, 13)
+        Me.lblSensor.TabIndex = 17
+        Me.lblSensor.Text = "Sensor"
         '
         'llSetToTop
         '
@@ -112,9 +123,9 @@ Partial Class Form1
         Me.chkShowCaptured.AutoSize = True
         Me.chkShowCaptured.Location = New System.Drawing.Point(6, 238)
         Me.chkShowCaptured.Name = "chkShowCaptured"
-        Me.chkShowCaptured.Size = New System.Drawing.Size(98, 17)
+        Me.chkShowCaptured.Size = New System.Drawing.Size(93, 17)
         Me.chkShowCaptured.TabIndex = 15
-        Me.chkShowCaptured.Text = "Show captured"
+        Me.chkShowCaptured.Text = "Show First Pic"
         Me.chkShowCaptured.UseVisualStyleBackColor = True
         '
         'btnCapture1
@@ -170,7 +181,7 @@ Partial Class Form1
         Me.GroupBox2.Controls.Add(Me.lblCount2)
         Me.GroupBox2.Controls.Add(Me.AxVLCPlugin22)
         Me.GroupBox2.Controls.Add(Me.btnLive2)
-        Me.GroupBox2.Location = New System.Drawing.Point(7, 263)
+        Me.GroupBox2.Location = New System.Drawing.Point(7, 283)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(304, 307)
         Me.GroupBox2.TabIndex = 11
@@ -229,14 +240,15 @@ Partial Class Form1
         Me.btnLive2.Text = "Live View"
         Me.btnLive2.UseVisualStyleBackColor = True
         '
-        'lblSensor
+        'chkShowLast
         '
-        Me.lblSensor.AutoSize = True
-        Me.lblSensor.Location = New System.Drawing.Point(101, 239)
-        Me.lblSensor.Name = "lblSensor"
-        Me.lblSensor.Size = New System.Drawing.Size(40, 13)
-        Me.lblSensor.TabIndex = 17
-        Me.lblSensor.Text = "Sensor"
+        Me.chkShowLast.AutoSize = True
+        Me.chkShowLast.Location = New System.Drawing.Point(6, 255)
+        Me.chkShowLast.Name = "chkShowLast"
+        Me.chkShowLast.Size = New System.Drawing.Size(94, 17)
+        Me.chkShowLast.TabIndex = 18
+        Me.chkShowLast.Text = "Show Last Pic"
+        Me.chkShowLast.UseVisualStyleBackColor = True
         '
         'Form1
         '
@@ -280,4 +292,5 @@ Partial Class Form1
     Friend WithEvents btnCenter As Button
     Friend WithEvents llSetToTop As LinkLabel
     Friend WithEvents lblSensor As Label
+    Friend WithEvents chkShowLast As CheckBox
 End Class

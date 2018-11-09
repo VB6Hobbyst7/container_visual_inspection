@@ -766,11 +766,17 @@ Public Class Form1
             vShowImage = False
         End If
 
+        If chkShowLast.Checked And e.CurrentCount = vCameraCapture_1 Then
+            AddImageToPictureBox(e.image)
+        End If
+
 
         Dim imageViewer As MyPictureBox = New MyPictureBox
         imageViewer = savePicture(FlowLayoutPanel1.Controls.Count + 1, e.image,
-                                     FlowLayoutPanel1.Height - 20, FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
-                                     chkShowCaptured.Checked And e.CurrentCount = 1, False, "top")
+                                     FlowLayoutPanel1.Height - 20,
+                                  FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
+                                     (chkShowCaptured.Checked And e.CurrentCount = 1) Or
+                                  (chkShowLast.Checked And e.CurrentCount = vCameraCapture_1), False, "top")
 
         SetCamera1LabelText(imageViewer.fileName)
         AddImageToPanel1(imageViewer)
