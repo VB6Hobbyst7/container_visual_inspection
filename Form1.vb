@@ -47,6 +47,7 @@ Public Class Form1
 
     Dim sensorPort As SerialPort
     Dim vPortName As String
+    Dim iSensorDelay As Integer = 0
 
     Private Sub Button1_Click(sender As Object, e As EventArgs)
 
@@ -158,6 +159,11 @@ Public Class Form1
         displaySensorData(indata)
 
         If indata = "1" Or indata = "M" Then
+            'Added by Chutchai on Oct 9,2018
+            'To dalay after capture "1" from COM port.
+            If indata = "1" Then
+                Threading.Thread.Sleep(iSensorDelay)
+            End If
             btnAuto1_Click(sender, e)
         End If
 
@@ -388,6 +394,13 @@ Public Class Form1
             vPortName = "COM5"
         End If
         enableSensorPort(vPortName)
+        Dim vSensorDelay As String
+        vSensorDelay = My_Ini.GetValue("sensor", "delay")
+        If vSensorDelay = "" Then
+            iSensorDelay = 0
+        Else
+            iSensorDelay = Int(vSensorDelay)
+        End If
         'end Port
     End Sub
 
