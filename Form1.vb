@@ -13,6 +13,8 @@ Imports GateInspection
 Imports System.Runtime.InteropServices
 
 Imports System.IO.Ports
+Imports System.Drawing.Drawing2D
+Imports System.Drawing.Imaging
 
 Public Class Form1
 
@@ -70,7 +72,7 @@ Public Class Form1
             Exit Sub
         End If
 
-        files = Directory.GetFiles(Application.StartupPath, "*.png", SearchOption.TopDirectoryOnly)
+        files = Directory.GetFiles(Application.StartupPath, "main*.png", SearchOption.TopDirectoryOnly)
 
         If files.Count = 0 Then
 
@@ -219,14 +221,18 @@ Public Class Form1
             PictureBox1.SizeMode = PictureBoxSizeMode.CenterImage
         End If
 
-        tImage.Save(file_prefix & "-" & "image" & index.ToString & ".png",
+
+
+        Dim vOriginalFile As String = "original_" & file_prefix & "-" & "image" & index.ToString & ".png"
+
+        tImage.Save(vOriginalFile,
                     System.Drawing.Imaging.ImageFormat.Png)
 
         '---
         ' Dim a = New Bitmap(My.Application.Info.DirectoryPath & "\" & file_prefix & "-" & "image" & index.ToString & ".png")
 
 
-        imageViewer.fileName = file_prefix & "-" & "image" & index.ToString & ".png"
+        imageViewer.fileName = vOriginalFile
         imageViewer.Image = tImage
         imageViewer.SizeMode = PictureBoxSizeMode.Zoom
         imageViewer.center = center
@@ -236,7 +242,40 @@ Public Class Form1
         imageViewer.Height = Height 'FlowLayoutPanel1.Height - 20
         imageViewer.Width = Width 'FlowLayoutPanel1.Width / 7
         'lblCapture.Text = Width'"Capture picture #" & index.ToString
+
+        'Resize picture and Delete Original file
+        Dim original As Image = Image.FromFile(vOriginalFile)
+        Dim resized As Image = ResizeImage(original, New Size(1024, 768))
+        Dim memStream As MemoryStream = New MemoryStream()
+        resized.Save(file_prefix & "-" & "image" & index.ToString & ".png", ImageFormat.Png)
+        'File.Delete(file_prefix & "-" & "image" & index.ToString & ".png")
+        '----------------------------------------
         Return imageViewer
+    End Function
+
+    Public Shared Function ResizeImage(ByVal image As Image,
+  ByVal size As Size, Optional ByVal preserveAspectRatio As Boolean = True) As Image
+        Dim newWidth As Integer
+        Dim newHeight As Integer
+        If preserveAspectRatio Then
+            Dim originalWidth As Integer = image.Width
+            Dim originalHeight As Integer = image.Height
+            Dim percentWidth As Single = CSng(size.Width) / CSng(originalWidth)
+            Dim percentHeight As Single = CSng(size.Height) / CSng(originalHeight)
+            Dim percent As Single = If(percentHeight < percentWidth,
+                percentHeight, percentWidth)
+            newWidth = CInt(originalWidth * percent)
+            newHeight = CInt(originalHeight * percent)
+        Else
+            newWidth = size.Width
+            newHeight = size.Height
+        End If
+        Dim newImage As Image = New Bitmap(newWidth, newHeight)
+        Using graphicsHandle As Graphics = Graphics.FromImage(newImage)
+            graphicsHandle.InterpolationMode = InterpolationMode.HighQualityBicubic
+            graphicsHandle.DrawImage(image, 0, 0, newWidth, newHeight)
+        End Using
+        Return newImage
     End Function
 
 
@@ -754,9 +793,11 @@ Public Class Form1
 
         Dim vImage As Bitmap = e.image
         Dim imageViewer As MyPictureBox = New MyPictureBox
-        imageViewer = savePicture(IIf(vCamera2Index, 1, 0), e.image,
+        'FlowLayoutPanel1.Controls.Count + 1
+        'IIf(vCamera2Index, 1, 0) -- Original
+        imageViewer = savePicture(IIf(vCamera2Index, 100, 101), e.image,
                                      FlowLayoutPanel2.Height - 5, FlowLayoutPanel2.Width / 3,
-                                       True, vCenter, "side")
+                                       True, vCenter, "main")
 
         SetCamera2LabelText(imageViewer.fileName)
         AddImageToPanel2(imageViewer)
@@ -789,7 +830,7 @@ Public Class Form1
                                      FlowLayoutPanel1.Height - 20,
                                   FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
                                      (chkShowCaptured.Checked And e.CurrentCount = 1) Or
-                                  (chkShowLast.Checked And e.CurrentCount = vCameraCapture_1), False, "top")
+                                  (chkShowLast.Checked And e.CurrentCount = vCameraCapture_1), False, "main")
 
         SetCamera1LabelText(imageViewer.fileName)
         AddImageToPanel1(imageViewer)
