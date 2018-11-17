@@ -243,15 +243,30 @@ Public Class Form1
         imageViewer.Width = Width 'FlowLayoutPanel1.Width / 7
         'lblCapture.Text = Width'"Capture picture #" & index.ToString
 
-        'Resize picture and Delete Original file
-        Dim original As Image = Image.FromFile(vOriginalFile)
-        Dim resized As Image = ResizeImage(original, New Size(1024, 768))
-        Dim memStream As MemoryStream = New MemoryStream()
-        resized.Save(file_prefix & "-" & "image" & index.ToString & ".png", ImageFormat.Png)
-        'File.Delete(file_prefix & "-" & "image" & index.ToString & ".png")
+        'Add on Nov 17,2018
+        'By Chutchai s
+        'Resize image file by using new Threading
+        Dim t1 As New Threading.Thread(AddressOf resize_file)
+        t1.Start(vOriginalFile)
         '----------------------------------------
+
         Return imageViewer
     End Function
+
+    Sub resize_file(vOriginalFile As String)
+        Try
+            'Resize picture and Delete Original file
+            Dim original As Image = Image.FromFile(vOriginalFile)
+            Dim resized As Image = ResizeImage(original, New Size(1024, 768))
+            Dim memStream As MemoryStream = New MemoryStream()
+            resized.Save(vOriginalFile.Replace("original_", ""), ImageFormat.Png)
+            'File.Delete(file_prefix & "-" & "image" & index.ToString & ".png")
+            '----------------------------------------
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
 
     Public Shared Function ResizeImage(ByVal image As Image,
   ByVal size As Size, Optional ByVal preserveAspectRatio As Boolean = True) As Image
