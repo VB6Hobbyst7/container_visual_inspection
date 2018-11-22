@@ -51,6 +51,8 @@ Public Class Form1
     Dim vPortName As String
     Dim iSensorDelay As Integer = 0
 
+    Dim vCurrentImagePath As String = ""
+
     Private Sub Button1_Click(sender As Object, e As EventArgs)
 
         AxVLCPlugin21.playlist.add("rtsp://gate:Gateview2018@" & vCameraIp_1 & "/Streaming/Channels/2")
@@ -61,6 +63,57 @@ Public Class Form1
     Private Sub btnDownload_Click(sender As Object, e As EventArgs)
 
     End Sub
+
+    'Function save_image_to_storage() As String
+    '    '1)List images
+    '    Dim files() As String
+    '    Dim FileName As String
+    '    Dim fileCreatedDate As DateTime
+
+    '    If vPath = "" Then
+    '        Exit Function
+    '    End If
+
+    '    files = Directory.GetFiles(Application.StartupPath, "main*.png", SearchOption.TopDirectoryOnly)
+
+    '    If files.Count = 0 Then
+    '        Exit Function
+    '    End If
+    '    FileName = files(0)
+    '    fileCreatedDate = File.GetLastWriteTime(FileName) '  .GetCreationTime(FileName)
+
+    '    Dim vYear, vMonth, vDay, vHour As String
+    '    vYear = fileCreatedDate.Year.ToString()
+    '    vMonth = fileCreatedDate.Month.ToString("00")
+    '    vDay = fileCreatedDate.Day.ToString("00")
+    '    vHour = fileCreatedDate.Hour.ToString("00") & fileCreatedDate.Minute.ToString("00")
+    '    '2)Created Folder on Storage
+    '    Dim vNewFolder As String = vPath & vYear & "\" & vMonth & "\" & vDay & "\" &
+    '                            vStationName & "\" & vHour
+    '    If Directory.Exists(vNewFolder) = False Then
+    '        Directory.CreateDirectory(vNewFolder)
+    '    End If
+    '    '3)Move file to Storage
+    '    Dim vOnlyFilename As String = ""
+    '    For Each FileName In files
+    '        vOnlyFilename = Path.GetFileName(FileName)
+    '        If File.Exists(vNewFolder & "\" & vOnlyFilename) Then
+    '            File.Delete(vNewFolder & "\" & vOnlyFilename)
+    '        End If
+    '        My.Computer.FileSystem.MoveFile(FileName, vNewFolder & "\" & vOnlyFilename)
+    '    Next
+    '    Return vNewFolder
+    '    '4)Delete images prefix with original*
+    '    'Found error on some process open some file.
+    '    'files = Directory.GetFiles(Application.StartupPath, "original_*.png", SearchOption.TopDirectoryOnly)
+
+    '    'If files.Count > 0 Then
+    '    '    For Each FileName In files
+    '    '        File.Delete(FileName)
+    '    '    Next
+    '    'End If
+
+    'End Function
 
     Sub save_image_to_storage()
         '1)List images
@@ -92,6 +145,9 @@ Public Class Form1
         If Directory.Exists(vNewFolder) = False Then
             Directory.CreateDirectory(vNewFolder)
         End If
+
+        vCurrentImagePath = vNewFolder
+
         '3)Move file to Storage
         Dim vOnlyFilename As String = ""
         For Each FileName In files
@@ -102,7 +158,16 @@ Public Class Form1
             My.Computer.FileSystem.MoveFile(FileName, vNewFolder & "\" & vOnlyFilename)
         Next
 
-        '4)Delete images
+        '4)Delete images prefix with original*
+        'Found error on some process open some file.
+        'files = Directory.GetFiles(Application.StartupPath, "original_*.png", SearchOption.TopDirectoryOnly)
+
+        'If files.Count > 0 Then
+        '    For Each FileName In files
+        '        File.Delete(FileName)
+        '    Next
+        'End If
+
     End Sub
 
 
@@ -420,7 +485,9 @@ Public Class Form1
         Else
             iDay = Val(sDay)
         End If
-        DeleteFolderOlder15Day(vPath, vStationName, iDay)
+        'Comment by CHutchai on Nov 21,2018
+        'To delete older files will do by manually.
+        'DeleteFolderOlder15Day(vPath, vStationName, iDay)
         '-----------------------------------------
         DeletePictureFiles()
 
@@ -596,6 +663,7 @@ Public Class Form1
         objCamera1.CapturesAsync(1)
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
 
+        Me.ActiveControl = Nothing
         'Older Style
         'captureOneShort(vCameraCaptureUrl_1, chkShowCaptured.Checked)
         'lblCapture.Text = "Capture picture #" & FlowLayoutPanel1.Controls.Count.ToString
@@ -658,6 +726,7 @@ Public Class Form1
         vCenter = False
         objCamera2.CapturesAsync(1)
 
+        Me.ActiveControl = Nothing
         'PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
 
         'If FlowLayoutPanel2.Controls.Count = 2 Then
@@ -673,13 +742,15 @@ Public Class Form1
     Private Sub btnAuto1_Click(sender As Object, e As EventArgs) Handles btnAuto1.Click
 
         '-----Start to save all images to Storage---
-        save_image_to_storage()
+        'save_image_to_storage()
         '-------------------------------------------
         clearFlowLayout(Nothing)
         'FlowLayoutPanel1.Controls.Clear()
 
         SetCamera1AutoBtnText("Auto(0)")
         objCamera1.CapturesAsync(vCameraCapture_1)
+
+        Me.ActiveControl = Nothing
 
         ' start_capture(vCameraCaptureUrl_1, vCameraDelay_1, vCameraCapture_1)
     End Sub
@@ -697,6 +768,13 @@ Public Class Form1
 
     Private Sub objCamera1_DownloadCompleted(ByVal sender As Object, ByVal e As DownloadCompletedEventArgs) Handles objCamera1.downloadCompleted
         SetCamera1LabelText(e.Message)
+
+        '-----Start to save all images to Storage---
+        'save_image_to_storage()
+        Dim t1 As New Threading.Thread(AddressOf save_image_to_storage)
+        t1.Start()
+        '-------------------------------------------
+
         'Dim vImage As Bitmap = e.image
 
         'Dim imageViewer As MyPictureBox = New MyPictureBox
@@ -720,6 +798,8 @@ Public Class Form1
         vCenter = True
         objCamera2.CapturesAsync(1)
         PictureBox1.SizeMode = PictureBoxSizeMode.CenterImage
+
+        Me.ActiveControl = Nothing
     End Sub
 
     Private Sub SetCamera1AutoBtnText(ByVal text As String)
