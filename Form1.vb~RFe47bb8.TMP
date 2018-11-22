@@ -133,8 +133,6 @@ Public Class Form1
             End If
 
             'resise first
-            'Add on Nov 22,2018 , version 1.0.0.18
-            'To resize before save to server 
             For Each FileName In files
                 resize_file(FileName)
             Next
@@ -325,7 +323,6 @@ Public Class Form1
         ''Add on Nov 17,2018
         ''By Chutchai s
         ''Resize image file by using new Threading
-        'comment on Nov 22,2018 -- found some error on threading(1.0.0.18)
         'Dim t1 As New Threading.Thread(AddressOf resize_file)
         't1.Start(vOriginalFile)
         ''----------------------------------------
