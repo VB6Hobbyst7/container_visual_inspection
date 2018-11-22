@@ -169,13 +169,13 @@ Public Class Form1
 
             '4)Delete images prefix with original*
             'Found error on some process open some file.
-            'files = Directory.GetFiles(Application.StartupPath, "original_*.png", SearchOption.TopDirectoryOnly)
+            files = Directory.GetFiles(Application.StartupPath, "original_*.png", SearchOption.TopDirectoryOnly)
 
-            'If files.Count > 0 Then
-            '    For Each FileName In files
-            '        File.Delete(FileName)
-            '    Next
-            'End If
+            If files.Count > 0 Then
+                For Each FileName In files
+                    File.Delete(FileName)
+                Next
+            End If
         Catch ex As Exception
             MsgBox("Error on saving file to storage :" & vbCrLf &
                     ex.Message)
