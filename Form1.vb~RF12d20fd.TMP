@@ -216,7 +216,7 @@ Public Class Form1
         End Try
     End Sub
 
-    Sub reConnectSensorPort(vPort As String)
+    Sub enableSensorPort(vPort As String)
         Try
             If sensorPort.IsOpen Then
                 Exit Try
@@ -235,7 +235,7 @@ Public Class Form1
             'End With
         Catch ex As Exception
             lblSensor.BackColor = Color.Red
-            lblSensor.Text = vPort & " error." : Application.DoEvents()
+            lblSensor.Text = vPort & " error."
         End Try
 
     End Sub
@@ -549,20 +549,6 @@ Public Class Form1
             vPortName = "COM5"
         End If
 
-
-
-        'enableSensorPort(vPortName)
-        Dim vSensorDelay As String
-        vSensorDelay = My_Ini.GetValue("sensor", "delay")
-        If vSensorDelay = "" Then
-            iSensorDelay = 0
-        Else
-            iSensorDelay = Int(vSensorDelay)
-        End If
-        'end Port
-
-        'Added by CHutchai S on Jan 2,2019
-        'To enable auto reconnect to comport function
         sensorPort = New SerialPort(vPortName)
         With sensorPort
             .BaudRate = 9600
@@ -573,7 +559,18 @@ Public Class Form1
             AddHandler .DataReceived, AddressOf DataReceviedHandler
             .Open()
         End With
-        vReConnectTimer.Interval = 2000
+
+        enableSensorPort(vPortName)
+        Dim vSensorDelay As String
+        vSensorDelay = My_Ini.GetValue("sensor", "delay")
+        If vSensorDelay = "" Then
+            iSensorDelay = 0
+        Else
+            iSensorDelay = Int(vSensorDelay)
+        End If
+        'end Port
+
+        vReConnectTimer.Interval = 3000
         AddHandler vReConnectTimer.Elapsed, New ElapsedEventHandler(AddressOf reConnectSensor)
         vReConnectTimer.Start()
     End Sub
@@ -581,23 +578,11 @@ Public Class Form1
     Sub reConnectSensor()
         Try
             vReConnectTimer.Stop()
-            reConnectSensorPort(vPortName)
+            enableSensorPort(vPortName)
         Catch ex As Exception
-            ShowPortReconnectStatus("Disconnect(" & Now.Second.ToString & ")")
+
         End Try
         vReConnectTimer.Start()
-    End Sub
-
-    Private Sub ShowPortReconnectStatus(ByVal vStatus As String)
-
-        If lblSensor.InvokeRequired Then
-            lblSensor.Invoke(New Action(Of String)(AddressOf ShowPortReconnectStatus), vStatus)
-            lblSensor.BackColor = Color.Red
-        Else
-            lblSensor.Text = vStatus
-            lblSensor.BackColor = Color.Red
-        End If
-
     End Sub
 
     Sub setCTCStoAlwaysTop()
