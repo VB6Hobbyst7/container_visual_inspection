@@ -28,6 +28,7 @@ Partial Class Form1
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.chkShowLast = New System.Windows.Forms.CheckBox()
         Me.lblSensor = New System.Windows.Forms.Label()
         Me.llSetToTop = New System.Windows.Forms.LinkLabel()
         Me.chkShowCaptured = New System.Windows.Forms.CheckBox()
@@ -43,7 +44,7 @@ Partial Class Form1
         Me.lblCount2 = New System.Windows.Forms.Label()
         Me.AxVLCPlugin22 = New AxAXVLC.AxVLCPlugin2()
         Me.btnLive2 = New System.Windows.Forms.Button()
-        Me.chkShowLast = New System.Windows.Forms.CheckBox()
+        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         CType(Me.AxVLCPlugin21, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -83,6 +84,7 @@ Partial Class Form1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.LinkLabel1)
         Me.GroupBox1.Controls.Add(Me.chkShowLast)
         Me.GroupBox1.Controls.Add(Me.lblSensor)
         Me.GroupBox1.Controls.Add(Me.llSetToTop)
@@ -98,6 +100,16 @@ Partial Class Form1
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "GroupBox1"
+        '
+        'chkShowLast
+        '
+        Me.chkShowLast.AutoSize = True
+        Me.chkShowLast.Location = New System.Drawing.Point(6, 255)
+        Me.chkShowLast.Name = "chkShowLast"
+        Me.chkShowLast.Size = New System.Drawing.Size(94, 17)
+        Me.chkShowLast.TabIndex = 18
+        Me.chkShowLast.Text = "Show Last Pic"
+        Me.chkShowLast.UseVisualStyleBackColor = True
         '
         'lblSensor
         '
@@ -240,15 +252,15 @@ Partial Class Form1
         Me.btnLive2.Text = "Live View"
         Me.btnLive2.UseVisualStyleBackColor = True
         '
-        'chkShowLast
+        'LinkLabel1
         '
-        Me.chkShowLast.AutoSize = True
-        Me.chkShowLast.Location = New System.Drawing.Point(6, 255)
-        Me.chkShowLast.Name = "chkShowLast"
-        Me.chkShowLast.Size = New System.Drawing.Size(94, 17)
-        Me.chkShowLast.TabIndex = 18
-        Me.chkShowLast.Text = "Show Last Pic"
-        Me.chkShowLast.UseVisualStyleBackColor = True
+        Me.LinkLabel1.AutoSize = True
+        Me.LinkLabel1.Location = New System.Drawing.Point(191, 256)
+        Me.LinkLabel1.Name = "LinkLabel1"
+        Me.LinkLabel1.Size = New System.Drawing.Size(62, 13)
+        Me.LinkLabel1.TabIndex = 19
+        Me.LinkLabel1.TabStop = True
+        Me.LinkLabel1.Text = "View Image"
         '
         'Form1
         '
@@ -293,4 +305,5 @@ Partial Class Form1
     Friend WithEvents llSetToTop As LinkLabel
     Friend WithEvents lblSensor As Label
     Friend WithEvents chkShowLast As CheckBox
+    Friend WithEvents LinkLabel1 As LinkLabel
 End Class

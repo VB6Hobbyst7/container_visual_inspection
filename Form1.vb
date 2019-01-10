@@ -117,6 +117,52 @@ Public Class Form1
 
     'End Function
 
+
+    Sub save_image_to_mostupdate()
+        Try
+            '1)List images
+            Dim files() As String
+            Dim FileName As String
+
+            If vPath = "" Then
+                Exit Sub
+            End If
+
+            files = Directory.GetFiles(Application.StartupPath, "original*.png", SearchOption.TopDirectoryOnly)
+
+            If files.Count = 0 Then
+                Exit Sub
+            End If
+
+            'For Each FileName In files
+            '    resize_file(FileName)
+            'Next
+            '------------
+            files = Directory.GetFiles(Application.StartupPath, "original*.png", SearchOption.TopDirectoryOnly)
+            FileName = files(0)
+
+            Dim vMostUpdatePath As String
+            vMostUpdatePath = vPath & "mostupdate\" & vStationName
+
+            'Delete all file
+            For Each deleteFile In Directory.GetFiles(vMostUpdatePath, "*.*", SearchOption.TopDirectoryOnly)
+                File.Delete(deleteFile)
+            Next
+
+            '3)Move file to Storage
+            Dim vOnlyFilename As String = ""
+            For Each FileName In files
+                vOnlyFilename = Path.GetFileName(FileName)
+                My.Computer.FileSystem.CopyFile(FileName, vMostUpdatePath & "\" & vOnlyFilename)
+            Next
+        Catch ex As Exception
+            MsgBox("Error on saving file to most update folder :" & vbCrLf &
+                    ex.Message)
+        End Try
+
+
+    End Sub
+
     Sub save_image_to_storage()
         Try
             '1)List images
@@ -846,6 +892,7 @@ Public Class Form1
     Private Sub objCamera1_DownloadCompleted(ByVal sender As Object, ByVal e As DownloadCompletedEventArgs) Handles objCamera1.downloadCompleted
         SetCamera1LabelText(e.Message)
 
+        save_image_to_mostupdate()
         '-----Start to save all images to Storage---
         save_image_to_storage()
 
@@ -1016,6 +1063,10 @@ Public Class Form1
 
     Private Sub llSetToTop_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles llSetToTop.LinkClicked
         setCTCStoAlwaysTop()
+    End Sub
+
+    Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
+        frmViewPicture.Show()
     End Sub
 End Class
 
