@@ -1074,22 +1074,11 @@ Public Class Form1
         frmViewPicture.Show()
     End Sub
 
-    'Private Sub lkPlayall_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles lkPlayall.LinkClicked
-    '    Dim img As Object
-    '    For Each img In FlowLayoutPanel1.Controls
-
-    '        ShowImageToPictureBox(img.image)
-    '        Application.DoEvents()
-    '        Threading.Thread.Sleep(1000)
-    '    Next
-    'End Sub
-
-    Private Sub btnPlayAll_Click(sender As Object, e As EventArgs) Handles btnPlayAll.Click
+    Private Sub lkPlayall_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles lkPlayall.LinkClicked
         Dim img As Object
         For Each img In FlowLayoutPanel1.Controls
 
             ShowImageToPictureBox(img.image)
-            Application.DoEvents()
             Threading.Thread.Sleep(1000)
         Next
     End Sub

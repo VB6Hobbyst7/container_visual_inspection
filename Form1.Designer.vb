@@ -28,6 +28,9 @@ Partial Class Form1
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.btnPlayAll = New System.Windows.Forms.Button()
+        Me.chkAllPic = New System.Windows.Forms.CheckBox()
+        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         Me.chkShowLast = New System.Windows.Forms.CheckBox()
         Me.lblSensor = New System.Windows.Forms.Label()
         Me.llSetToTop = New System.Windows.Forms.LinkLabel()
@@ -44,7 +47,6 @@ Partial Class Form1
         Me.lblCount2 = New System.Windows.Forms.Label()
         Me.AxVLCPlugin22 = New AxAXVLC.AxVLCPlugin2()
         Me.btnLive2 = New System.Windows.Forms.Button()
-        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         CType(Me.AxVLCPlugin21, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -84,6 +86,8 @@ Partial Class Form1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.btnPlayAll)
+        Me.GroupBox1.Controls.Add(Me.chkAllPic)
         Me.GroupBox1.Controls.Add(Me.LinkLabel1)
         Me.GroupBox1.Controls.Add(Me.chkShowLast)
         Me.GroupBox1.Controls.Add(Me.lblSensor)
@@ -96,10 +100,39 @@ Partial Class Form1
         Me.GroupBox1.Controls.Add(Me.btnLive1)
         Me.GroupBox1.Location = New System.Drawing.Point(7, 0)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(304, 277)
+        Me.GroupBox1.Size = New System.Drawing.Size(304, 297)
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "GroupBox1"
+        '
+        'btnPlayAll
+        '
+        Me.btnPlayAll.Location = New System.Drawing.Point(97, 271)
+        Me.btnPlayAll.Name = "btnPlayAll"
+        Me.btnPlayAll.Size = New System.Drawing.Size(63, 21)
+        Me.btnPlayAll.TabIndex = 22
+        Me.btnPlayAll.Text = "Play"
+        Me.btnPlayAll.UseVisualStyleBackColor = True
+        '
+        'chkAllPic
+        '
+        Me.chkAllPic.AutoSize = True
+        Me.chkAllPic.Location = New System.Drawing.Point(6, 274)
+        Me.chkAllPic.Name = "chkAllPic"
+        Me.chkAllPic.Size = New System.Drawing.Size(85, 17)
+        Me.chkAllPic.TabIndex = 20
+        Me.chkAllPic.Text = "Show All Pic"
+        Me.chkAllPic.UseVisualStyleBackColor = True
+        '
+        'LinkLabel1
+        '
+        Me.LinkLabel1.AutoSize = True
+        Me.LinkLabel1.Location = New System.Drawing.Point(191, 256)
+        Me.LinkLabel1.Name = "LinkLabel1"
+        Me.LinkLabel1.Size = New System.Drawing.Size(62, 13)
+        Me.LinkLabel1.TabIndex = 19
+        Me.LinkLabel1.TabStop = True
+        Me.LinkLabel1.Text = "View Image"
         '
         'chkShowLast
         '
@@ -193,9 +226,9 @@ Partial Class Form1
         Me.GroupBox2.Controls.Add(Me.lblCount2)
         Me.GroupBox2.Controls.Add(Me.AxVLCPlugin22)
         Me.GroupBox2.Controls.Add(Me.btnLive2)
-        Me.GroupBox2.Location = New System.Drawing.Point(7, 283)
+        Me.GroupBox2.Location = New System.Drawing.Point(7, 297)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(304, 307)
+        Me.GroupBox2.Size = New System.Drawing.Size(304, 295)
         Me.GroupBox2.TabIndex = 11
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "GroupBox2"
@@ -213,7 +246,7 @@ Partial Class Form1
         '
         Me.FlowLayoutPanel2.Location = New System.Drawing.Point(9, 241)
         Me.FlowLayoutPanel2.Name = "FlowLayoutPanel2"
-        Me.FlowLayoutPanel2.Size = New System.Drawing.Size(284, 65)
+        Me.FlowLayoutPanel2.Size = New System.Drawing.Size(284, 44)
         Me.FlowLayoutPanel2.TabIndex = 15
         '
         'btnCapture2
@@ -251,16 +284,6 @@ Partial Class Form1
         Me.btnLive2.TabIndex = 10
         Me.btnLive2.Text = "Live View"
         Me.btnLive2.UseVisualStyleBackColor = True
-        '
-        'LinkLabel1
-        '
-        Me.LinkLabel1.AutoSize = True
-        Me.LinkLabel1.Location = New System.Drawing.Point(191, 256)
-        Me.LinkLabel1.Name = "LinkLabel1"
-        Me.LinkLabel1.Size = New System.Drawing.Size(62, 13)
-        Me.LinkLabel1.TabIndex = 19
-        Me.LinkLabel1.TabStop = True
-        Me.LinkLabel1.Text = "View Image"
         '
         'Form1
         '
@@ -306,4 +329,6 @@ Partial Class Form1
     Friend WithEvents lblSensor As Label
     Friend WithEvents chkShowLast As CheckBox
     Friend WithEvents LinkLabel1 As LinkLabel
+    Friend WithEvents chkAllPic As CheckBox
+    Friend WithEvents btnPlayAll As Button
 End Class
