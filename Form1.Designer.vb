@@ -28,6 +28,7 @@ Partial Class Form1
         Me.FlowLayoutPanel1 = New System.Windows.Forms.FlowLayoutPanel()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.chkSaveMostUpdate = New System.Windows.Forms.CheckBox()
         Me.btnPlayAll = New System.Windows.Forms.Button()
         Me.chkAllPic = New System.Windows.Forms.CheckBox()
         Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
@@ -86,6 +87,7 @@ Partial Class Form1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.chkSaveMostUpdate)
         Me.GroupBox1.Controls.Add(Me.btnPlayAll)
         Me.GroupBox1.Controls.Add(Me.chkAllPic)
         Me.GroupBox1.Controls.Add(Me.LinkLabel1)
@@ -104,6 +106,16 @@ Partial Class Form1
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "GroupBox1"
+        '
+        'chkSaveMostUpdate
+        '
+        Me.chkSaveMostUpdate.AutoSize = True
+        Me.chkSaveMostUpdate.Location = New System.Drawing.Point(168, 274)
+        Me.chkSaveMostUpdate.Name = "chkSaveMostUpdate"
+        Me.chkSaveMostUpdate.Size = New System.Drawing.Size(112, 17)
+        Me.chkSaveMostUpdate.TabIndex = 23
+        Me.chkSaveMostUpdate.Text = "Save most update"
+        Me.chkSaveMostUpdate.UseVisualStyleBackColor = True
         '
         'btnPlayAll
         '
@@ -185,7 +197,7 @@ Partial Class Form1
         'lblCapture
         '
         Me.lblCapture.AutoSize = True
-        Me.lblCapture.Location = New System.Drawing.Point(17, 193)
+        Me.lblCapture.Location = New System.Drawing.Point(3, 190)
         Me.lblCapture.Name = "lblCapture"
         Me.lblCapture.Size = New System.Drawing.Size(39, 13)
         Me.lblCapture.TabIndex = 13
@@ -261,7 +273,7 @@ Partial Class Form1
         'lblCount2
         '
         Me.lblCount2.AutoSize = True
-        Me.lblCount2.Location = New System.Drawing.Point(17, 193)
+        Me.lblCount2.Location = New System.Drawing.Point(3, 190)
         Me.lblCount2.Name = "lblCount2"
         Me.lblCount2.Size = New System.Drawing.Size(39, 13)
         Me.lblCount2.TabIndex = 13
@@ -331,4 +343,5 @@ Partial Class Form1
     Friend WithEvents LinkLabel1 As LinkLabel
     Friend WithEvents chkAllPic As CheckBox
     Friend WithEvents btnPlayAll As Button
+    Friend WithEvents chkSaveMostUpdate As CheckBox
 End Class

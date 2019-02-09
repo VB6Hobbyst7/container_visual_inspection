@@ -134,10 +134,7 @@ Public Class Form1
                 Exit Sub
             End If
 
-            'For Each FileName In files
-            '    resize_file(FileName)
-            'Next
-            '------------
+
             files = Directory.GetFiles(Application.StartupPath, "original*.png", SearchOption.TopDirectoryOnly)
             FileName = files(0)
 
@@ -890,27 +887,30 @@ Public Class Form1
     End Sub
 
     Private Sub objCamera1_DownloadCompleted(ByVal sender As Object, ByVal e As DownloadCompletedEventArgs) Handles objCamera1.downloadCompleted
-        SetCamera1LabelText(e.Message)
 
-        save_image_to_mostupdate()
+
+        'save_image_to_mostupdate()
         '-----Start to save all images to Storage---
-        save_image_to_storage()
+        'save_image_to_storage()
 
         'FOund error after finished on version 1.0.0.8
         'Rollback to original function/
         'Dim t1 As New Threading.Thread(AddressOf save_image_to_storage)
         't1.Start()
         '-------------------------------------------
+        Dim startTime As DateTime = DateTime.Now
+        'Save to most update
+        If chkSaveMostUpdate.Checked Then
+            Dim t1 As New Threading.Thread(AddressOf save_image_to_mostupdate)
+            t1.Start()
+        End If
 
-        'Dim vImage As Bitmap = e.image
+        Dim t2 As New Threading.Thread(AddressOf save_image_to_storage)
+        t2.Start()
+        Dim duration As TimeSpan = DateTime.Now - startTime
 
-        'Dim imageViewer As MyPictureBox = New MyPictureBox
-        'imageViewer = savePicture(FlowLayoutPanel1.Controls.Count + 1, e.image,
-        '                             FlowLayoutPanel1.Height - 20, FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
-        '                             chkShowCaptured.Checked, False, "top")
+        SetCamera1LabelText(e.Message & " Saved :" & (duration.TotalSeconds).ToString + " Sec(s)")
 
-        'FlowLayoutPanel1.Controls.Add(imageViewer)
-        'FlowLayoutPanel1.ScrollControlIntoView(imageViewer)
     End Sub
 
 
@@ -1209,7 +1209,7 @@ Public Class Camera
             Threading.Thread.Sleep(_delay)
         Next
         Dim duration As TimeSpan = DateTime.Now - startTime
-        msg = "Download successful : " + (duration.TotalSeconds).ToString + " Sec(s)"
+        msg = "Download : " + (duration.TotalSeconds).ToString + " Sec(s)"
 
         If context Is Nothing Then
             OnDownloadCompleted(New DownloadCompletedEventArgs(msg))
