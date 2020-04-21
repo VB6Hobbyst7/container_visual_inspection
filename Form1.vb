@@ -519,7 +519,11 @@ Public Class Form1
 
 
         vCameraIp_1 = My_Ini.GetValue("Camera1", "IP")
-        vCameraCaptureUrl_1 = "http://gate:Gateview2018@" & vCameraIp_1 & "/Streaming/Channels/2/picture"
+
+        'vCameraCaptureUrl_1 = "http://gate:Gateview2018@" & vCameraIp_1 & "/Streaming/Channels/2/picture"
+        vCameraCaptureUrl_1 = "http://" & vCameraIp_1 & "/Streaming/Channels/2/picture"
+
+
         vCameraLiveUrl_1 = "rtsp://gate:Gateview2018@" & vCameraIp_1 & "/Streaming/Channels/2"
 
         vCameraDelay_1 = Int(My_Ini.GetValue("Camera1", "delay"))
@@ -759,6 +763,7 @@ Public Class Form1
     Private Sub btnSingleCapture_Click(sender As Object, e As EventArgs)
         Dim tClient As New System.Net.WebClient
         tClient.Credentials = New System.Net.NetworkCredential("admin", "Autogate2018")
+        'tClient.Credentials = New System.Net.NetworkCredential("gate", "Gateview2018")
         Dim imageViewer As MyPictureBox = New MyPictureBox
         imageViewer = capturePicture(FlowLayoutPanel1.Controls.Count + 1, tClient, vCameraCaptureUrl_1)
         FlowLayoutPanel1.Controls.Add(imageViewer)
@@ -792,7 +797,8 @@ Public Class Form1
     Sub captureOneShort(url As String, Optional show As Boolean = False,
                         Optional file_prefix As String = "top")
         Dim tClient As New System.Net.WebClient
-        tClient.Credentials = New System.Net.NetworkCredential("admin", "Autogate2018")
+        ' tClient.Credentials = New System.Net.NetworkCredential("admin", "Autogate2018")
+        tClient.Credentials = New System.Net.NetworkCredential("gate", "Gateview2018")
         Dim imageViewer As MyPictureBox = New MyPictureBox
         imageViewer = capturePicture(FlowLayoutPanel1.Controls.Count + 1, tClient, url,
                                      FlowLayoutPanel1.Height - 20, FlowLayoutPanel1.Width / (vCameraCapture_1 + 4),
@@ -839,21 +845,23 @@ Public Class Form1
 
     Private Sub btnCapture2_Click(sender As Object, e As EventArgs) Handles btnCapture2.Click
 
-        'objCamera2.capture(0)
-        'objCamera2.CaptureAsync()
+
+        'Dim remoteUri As String = "http://192.168.103.11/Streaming/Channels/1/picture"
+        'Dim fileName As String = "materi.zip"
+        'Dim password As String = "Gateview2018"
+        'Dim username As String = "gate"
+
+        'Dim client As New WebClient()
+
+        'client.Credentials = New NetworkCredential(username, password)
+        'client.DownloadFile(remoteUri, "test.png")
 
         'Threading
         vCenter = False
         objCamera2.CapturesAsync(1)
 
         Me.ActiveControl = Nothing
-        'PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
 
-        'If FlowLayoutPanel2.Controls.Count = 2 Then
-        '    FlowLayoutPanel2.Controls.RemoveAt(0)
-        'End If
-        'captureOneShort2(vCameraCaptureUrl_2, True)
-        'lblCount2.Text = "Capture picture #" & FlowLayoutPanel2.Controls.Count.ToString
     End Sub
 
 
@@ -1113,7 +1121,11 @@ Public Class Camera
         End Get
         Set(ByVal value As String)
             _ip = value
-            vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+            'Comment on Apr 21,2020
+            'IE doesn't support url with User password
+            'vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+
+            vUrl = "http://" & _ip & "/Streaming/Channels/1/picture"
         End Set
     End Property
     Public Property delay() As Integer
@@ -1141,7 +1153,10 @@ Public Class Camera
 
     Public Sub New(Optional ip As String = "")
         _ip = ip
-        vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+        'IE doesn't support url with User password
+        'vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+        'vUrl = "http://gate:Gateview2018@" & _ip & "/Streaming/Channels/2/picture"
+        vUrl = "http://" & _ip & "/Streaming/Channels/1/picture"
     End Sub
 
     Public Event DownloadChanged As EventHandler(Of DownloadChangedEventArgs)
@@ -1160,7 +1175,19 @@ Public Class Camera
         Try
             'Dim e As DownloadCompletedEventArgs
             'e = New DownloadCompletedEventArgs(1, max)
+
+            'Dim client As New WebClient()
+
+            'client.Credentials = New NetworkCredential("gate", "Gateview2018")
+            'Dim ImageInBytes2() As Byte = client.DownloadData("http://192.168.103.11/Streaming/Channels/1/picture")
+            'client.DownloadFile("http://192.168.103.11/Streaming/Channels/1/picture", "test2.png")
+
+            'Dim ImageInBytes2() As Byte = client.DownloadData(vUrl)
+            'client.DownloadFile(vUrl, "test2.png")
+
+
             Dim tClient As New System.Net.WebClient
+
             tClient.Credentials = New System.Net.NetworkCredential("gate", "Gateview2018")
 
             Dim ImageInBytes() As Byte = tClient.DownloadData(vUrl)
