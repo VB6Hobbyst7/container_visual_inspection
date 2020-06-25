@@ -53,6 +53,7 @@ Public Class Form1
     Dim iSensorDelay As Integer = 0
 
     Dim vCurrentImagePath As String = ""
+    'Dim vReConnectTimer As New Timer
     Dim vReConnectTimer As New Timer
 
     Private Sub Button1_Click(sender As Object, e As EventArgs)
@@ -521,7 +522,7 @@ Public Class Form1
         vCameraIp_1 = My_Ini.GetValue("Camera1", "IP")
 
         'vCameraCaptureUrl_1 = "http://gate:Gateview2018@" & vCameraIp_1 & "/Streaming/Channels/2/picture"
-        vCameraCaptureUrl_1 = "http://" & vCameraIp_1 & "/Streaming/Channels/2/picture"
+        vCameraCaptureUrl_1 = "http://" & vCameraIp_1 & "/Streaming/Channels/1/picture"
 
 
         vCameraLiveUrl_1 = "rtsp://gate:Gateview2018@" & vCameraIp_1 & "/Streaming/Channels/2"
